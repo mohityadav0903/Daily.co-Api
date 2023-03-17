@@ -6,20 +6,16 @@ const linkRoutes = require("./routes/links");
 const dotenv = require("dotenv");
 dotenv.config();
 app.use(express.json());
-app.use(cors(
-    {   
-        origin: "*",
-        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-        preflightContinue: false,
-        optionsSuccessStatus: 204
-    }
-)
-)
+app.use(cors());
 app.use("/api/links", linkRoutes);
 app.get('/',(req,res)=>{
     res.send("hello");
 })
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL,
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
 .then(()=>{
     console.log("connected to mongodb")
 })

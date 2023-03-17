@@ -8,17 +8,21 @@ dotenv.config();
 router.post('/create', async (req, res) => {
     const { roomName, userId } = req.body;
     try {
-        const newLink = new Link({
-            roomName,
-            userId,
-        });
-        await newLink.save();
-  
-        const token = jwt.sign({ userId: newLink.userId }, process.env.JWT_SECRET+newLink.isJoined);
-        if(token)
-        res.status(200).json({ token });
-
-        
+       const linkExist = await Link.findOne({roomName,userId});
+         if(linkExist){
+           const token = linkExist.token;
+              res.status(200).json({token});
+         }
+            else{
+                const token = jwt.sign({userId,roomName},process.env.JWT_SECRET+false);
+                const newLink = new Link({
+                    roomName,
+                    userId,
+                    token,
+                });
+                await newLink.save();
+                res.status(200).json({token});
+            }
     } catch (error) {
         res.status(500).json(error);
     }
@@ -28,7 +32,7 @@ router.post('/join', async (req, res) => {
 
     const {userId,roomName,token} = req.body;
     try {
-       const linkExist = await Link.findOne({roomName:roomName,userId:userId});
+       const linkExist = await Link.findOne({roomName:roomName,userId:userId,token:token});
          if(linkExist){
             const decoded = jwt.verify(token, process.env.JWT_SECRET+linkExist.isJoined);
             if(decoded){
