@@ -36,9 +36,7 @@ router.post('/join', async (req, res) => {
          if(linkExist){
             const decoded = jwt.verify(token, process.env.JWT_SECRET+linkExist.isJoined);
             if(decoded){
-                linkExist.isJoined = true;
-                await linkExist.save();
-                res.status(200).json("Joined");
+                res.status(200).json("Valid token");
             }
             else{
                 res.status(401).json("Invalid token");
@@ -52,6 +50,26 @@ router.post('/join', async (req, res) => {
         res.status(500).json(error);
     }
 
+});
+
+router.post('/joined', async (req, res) => {
+    const {userId,roomName,token} = req.body;
+    try {
+        const linkExist = await Link.findOne({roomName:roomName,userId:userId,token:token});
+
+        if(linkExist){
+            linkExist.isJoined = true;
+            await linkExist.save();
+            res.status(200).json("Joined");
+        }
+        else{
+            res.status(404).json("Link not found");
+        }
+
+    }
+    catch (error) {
+        res.status(500).json(error);
+    }
 });
 
 router.post('/leave', async (req, res) => {
