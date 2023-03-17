@@ -7,7 +7,7 @@ const linkSchema = new Schema({
         required: true,
     },
     userId : {
-        type: String,
+        type: Number,
         required: true,
     },
     token: {
