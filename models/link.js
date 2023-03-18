@@ -1,23 +1,29 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-const linkSchema = new Schema({
+const linkSchema = new mongoose.Schema({
     roomName: {
         type: String,
         required: true,
+        unique: true
     },
-    userId : {
-        type: Number,
-        required: true,
-    },
-    token: {
-        type: String,
-        required: true,
-    },
-    isJoined: {
-        type: Boolean,
-        default: false,
-    },
+    links: [
+        {
+            linkNo: {
+                type: String,
+                required: true,
+            },
+            token: {
+                type: String,
+                required: true,
+            },
+            isJoined: {
+                type: Boolean,
+                required: true,
+                default: false,
+            },
+        },
+    ],
+   
 
 },{timestamps: true});
 
